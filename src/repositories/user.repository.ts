@@ -11,16 +11,17 @@ export const userRepository = {
    * Crea un nuevo usuario
    */
   async create(
-    name: string,
-    email: string
+    nombre: string,
+    email: string,
+    passwordHash: string
   ): Promise<UserEntity> {
     const result = await query<UserEntity>(
       `
-      INSERT INTO usuarios (name, email)
-      VALUES ($1, $2)
-      RETURNING id, name, email, created_at
+      INSERT INTO usuarios (nombre, email, password_hash)
+      VALUES ($1, $2, $3)
+      RETURNING id, nombre, email, password_hash, fecha_registro, activo
       `,
-      [name,email]
+      [nombre, email, passwordHash]
     );
 
     if (result.rows.length === 0) {
@@ -36,7 +37,7 @@ export const userRepository = {
   async findByEmail(email: string): Promise<UserEntity | null> {
     const result = await query<UserEntity>(
       `
-      SELECT id, name, email, created_at
+      SELECT id, nombre, email, password_hash, fecha_registro, activo
       FROM usuarios
       WHERE email = $1
       `,
@@ -52,7 +53,7 @@ export const userRepository = {
   async findById(id: number): Promise<UserEntity | null> {
     const result = await query<UserEntity>(
       `
-      SELECT id, name, email, created_at
+      SELECT id, nombre, email, password_hash, fecha_registro, activo
       FROM usuarios
       WHERE id = $1
       `,
@@ -68,9 +69,9 @@ export const userRepository = {
   async findAll(): Promise<UserEntity[]> {
     const result = await query<UserEntity>(
       `
-      SELECT id, name, email, created_at
+      SELECT id, nombre, email, fecha_registro, activo
       FROM usuarios
-      ORDER BY created_at DESC
+      ORDER BY fecha_registro DESC
       `
     );
 
@@ -82,16 +83,16 @@ export const userRepository = {
    */
   async update(
     id: number,
-    name?: string,
+    nombre?: string,
     email?: string
   ): Promise<UserEntity | null> {
     const updates: string[] = [];
     const params: any[] = [];
     let paramIndex = 1;
 
-    if (name !== undefined) {
-      updates.push(`name = $${paramIndex++}`);
-      params.push(name);
+    if (nombre !== undefined) {
+      updates.push(`nombre = $${paramIndex++}`);
+      params.push(nombre);
     }
 
     if (email !== undefined) {
@@ -108,9 +109,9 @@ export const userRepository = {
     const result = await query<UserEntity>(
       `
       UPDATE usuarios
-      SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP
+      SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
-      RETURNING id, name, email, created_at
+      RETURNING id, nombre, email, password_hash, fecha_registro, activo
       `,
       params
     );
