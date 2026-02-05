@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CreateUserDto } from '../models/dto/create-user.dto';
 import { authService } from '../services/auth.service';
+import { signToken } from '../lib/jwt';
 
 export const authController = {
   /**
@@ -110,15 +111,40 @@ export const authController = {
         );
       }
 
-      const user = await authService.getUserByEmail(body.email.trim().toLowerCase());
+      const user = await authService.getUserByEmail(
+        body.email.trim().toLowerCase()
+      );
 
-      return NextResponse.json(
+      if (!user) {
+        return NextResponse.json(
+          { error: 'Email o contraseña incorrectos' },
+          { status: 401 }
+        );
+      }
+
+      // Generar JWT y devolverlo en una cookie httpOnly
+      const token = signToken({
+        sub: user.id,
+        email: user.email,
+      });
+
+      const response = NextResponse.json(
         {
           message: 'Login exitoso',
           user,
         },
         { status: 200 }
       );
+
+      response.cookies.set('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60, // 1 hora
+      });
+
+      return response;
     } catch (error) {
       console.error('Error en login:', error);
       return NextResponse.json(
