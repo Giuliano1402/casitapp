@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from './src/lib/jwt';
 
 const PUBLIC_PATHS = [
   '/',
@@ -28,14 +27,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  const payload = verifyToken(token);
-
-  if (!payload) {
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Si el token es válido, se permite el acceso
+  // Si existe token, se permite el acceso
   return NextResponse.next();
 }
 
