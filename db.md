@@ -33,13 +33,3 @@ CREATE TABLE transacciones (
     es_recurrente BOOLEAN DEFAULT FALSE,
     metodo_pago metodo_pago,
 );
-Tabla notificaciones
-CREATE TABLE notificaciones (
-    id SERIAL PRIMARY KEY,
-    usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-    tipo tipo_notificacion NOT NULL,
-    titulo VARCHAR(150) NOT NULL,
-    mensaje TEXT NOT NULL,
-    leida BOOLEAN DEFAULT FALSE,
-   fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
