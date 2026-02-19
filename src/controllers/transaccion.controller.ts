@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 import { transaccionService } from '../services/transaccion.service';
 
 export const transaccionController = {
-  // GET /api/transacciones?usuario_id=&tipo=&categoria_id=&fecha_desde=&fecha_hasta=&es_recurrente=
+  // GET /api/transacciones?tipo=&estado=&categoria_id=&fecha_desde=&fecha_hasta=&es_recurrente=
   async getAll(request: Request) {
     const { searchParams } = new URL(request.url);
 
@@ -18,10 +18,11 @@ export const transaccionController = {
 
     const filtros = {
       usuario_id,
-      tipo: searchParams.get('tipo') as any ?? undefined,
+      tipo:         (searchParams.get('tipo') as any)         ?? undefined,
+      estado:       (searchParams.get('estado') as any)       ?? undefined,
       categoria_id: searchParams.get('categoria_id') ? Number(searchParams.get('categoria_id')) : undefined,
-      fecha_desde: searchParams.get('fecha_desde') ?? undefined,
-      fecha_hasta: searchParams.get('fecha_hasta') ?? undefined,
+      fecha_desde:  searchParams.get('fecha_desde')  ?? undefined,
+      fecha_hasta:  searchParams.get('fecha_hasta')  ?? undefined,
       es_recurrente: searchParams.get('es_recurrente') !== null
         ? searchParams.get('es_recurrente') === 'true'
         : undefined,

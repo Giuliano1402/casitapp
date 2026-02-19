@@ -11,7 +11,8 @@ import {
   FiltrosTransaccion,
 } from '../repositories/transaccion.repository';
 
-const TIPOS_VALIDOS = ['INGRESO', 'GASTO'];
+const TIPOS_VALIDOS   = ['INGRESO', 'GASTO'];
+const ESTADOS_VALIDOS = ['COMPLETADO', 'PENDIENTE'];
 const METODOS_VALIDOS = ['EFECTIVO', 'TRANSFERENCIA', 'TARJETA_DEBITO', 'TARJETA_CREDITO', 'CHEQUE', 'OTRO'];
 
 export const transaccionService = {
@@ -26,9 +27,11 @@ export const transaccionService = {
   },
 
   async create(data: CreateTransaccionDto): Promise<TransaccionEntity> {
-    // Validaciones
     if (!data.tipo || !TIPOS_VALIDOS.includes(data.tipo)) {
       throw new Error('El tipo debe ser INGRESO o GASTO');
+    }
+    if (data.estado && !ESTADOS_VALIDOS.includes(data.estado)) {
+      throw new Error('El estado debe ser COMPLETADO o PENDIENTE');
     }
     if (!data.monto || isNaN(Number(data.monto)) || Number(data.monto) <= 0) {
       throw new Error('El monto debe ser un número mayor a 0');
@@ -49,6 +52,7 @@ export const transaccionService = {
     return transaccionRepository.create({
       ...data,
       monto: Number(data.monto),
+      estado: data.estado ?? 'COMPLETADO',
     });
   },
 
@@ -57,6 +61,9 @@ export const transaccionService = {
 
     if (data.tipo && !TIPOS_VALIDOS.includes(data.tipo)) {
       throw new Error('El tipo debe ser INGRESO o GASTO');
+    }
+    if (data.estado && !ESTADOS_VALIDOS.includes(data.estado)) {
+      throw new Error('El estado debe ser COMPLETADO o PENDIENTE');
     }
     if (data.monto !== undefined && (isNaN(Number(data.monto)) || Number(data.monto) <= 0)) {
       throw new Error('El monto debe ser un número mayor a 0');

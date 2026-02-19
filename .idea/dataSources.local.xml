@@ -14,7 +14,10 @@
             <node kind="database" qname="@">
               <node kind="schema" qname="@" />
             </node>
-            <node kind="database" qname="casitapp" />
+            <node kind="database" qname="casitapp">
+              <node kind="schema" negative="1" />
+            </node>
+            <node kind="database" qname="zeus_db" />
           </node>
         </introspection-scope>
       </schema-mapping>
