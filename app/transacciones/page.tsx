@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
@@ -81,6 +82,7 @@ function formatFecha(fecha: string) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function TransaccionesPage() {
+  const router = useRouter();
   const [transacciones, setTransacciones] = useState<Transaccion[]>([]);
   const [categorias, setCategorias]       = useState<Categoria[]>([]);
   const [loading, setLoading]             = useState(true);
@@ -234,9 +236,17 @@ export default function TransaccionesPage() {
 
         {/* Header */}
         <header className="flex items-center justify-between gap-4 bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg">
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold text-black dark:text-white">Transacciones</h1>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">Registra y gestiona tus ingresos y gastos</p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/inicio')}
+              className="rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-sm font-medium py-2 px-3 transition-colors"
+            >
+              ← Inicio
+            </button>
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-black dark:text-white">Transacciones</h1>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Registra y gestiona tus ingresos y gastos</p>
+            </div>
           </div>
           <button
             onClick={openCreate}
